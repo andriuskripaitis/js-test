@@ -20,7 +20,19 @@
         }
 
         button.on('click', function () {
-            var companyName = input.val();
+            var companyName = $.trim(input.val());
+
+            if (!companyName) {
+                input
+                    .addClass('invalid')
+                    .on('keypress', function keypressHandler() {
+                        input
+                            .removeClass('invalid')
+                            .off('keypress', keypressHandler);
+                    });
+
+                return;
+            }
 
             getCompanySymbol(companyName, function (symbol) {
                 getQuote(symbol, function (quoteData) {
