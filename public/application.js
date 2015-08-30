@@ -17,12 +17,20 @@
         }
 
         function showData(data) {
+
+            if (data.Status !== "SUCCESS") {
+                return;
+            }
             
             var $headRow = $('<tr></tr>');
             var $dataRow = $('<tr class="result"></tr>');
             var initialized = $table.data('initialized') || false;
 
             $.each(Object.keys(data), function(i, key) {
+
+                if (key === "Status") {
+                    return;
+                }
 
                 if (!initialized) {
                     $headRow.append('<th>' + key + '</th>');
@@ -72,13 +80,13 @@
                         result.text("Nothing found");
                         return;
                     }
-                    return getQuote(data[0].Symbol);
-                })
-                .then(function(data) {
-                    return showData(data);
-                })
-                .fail(function(error) {
-                    console.log(error);
+
+                    $.each(data, function(i, data) {
+                        getQuote(data.Symbol)
+                            .then(function(data){
+                                showData(data);
+                            });
+                    })
                 })
                 .done(function() {
                     button.prop('disabled', false);
