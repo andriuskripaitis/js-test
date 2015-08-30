@@ -7,19 +7,16 @@
         var button = $('.search-button');
         var result = $('.result');
 
-        function getCompanySymbol(companyName, cb) {
-            $.getJSON('Api/v2/Lookup/json', {input: companyName}, function (data) {
-                cb(data[0].Symbol);
-            });
+        function getCompanySymbol(companyName) {
+            return $.getJSON('Api/v2/Lookup/json', {input: companyName});
         }
 
-        function getQuote(symbol, cb) {
-            $.getJSON('Api/v2/Quote/json', {symbol: symbol}, function (data) {
-                cb(data);
-            });
+        function getQuote(symbol) {
+            return $.getJSON('Api/v2/Quote/json', {symbol: symbol});
         }
 
         button.on('click', function () {
+
             var companyName = $.trim(input.val());
 
             if (!companyName) {
@@ -34,11 +31,13 @@
                 return;
             }
 
-            getCompanySymbol(companyName, function (symbol) {
-                getQuote(symbol, function (quoteData) {
+            getCompanySymbol(companyName)
+                .then(function(data){
+                    return getQuote(data[0].Symbol)
+                .then(function(data){
                     result.empty();
-                    result.text(JSON.stringify(quoteData, null, 4));
-                })
+                    result.text(JSON.stringify(data, null, 4));
+                });
             });
         });
     });
