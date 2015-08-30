@@ -31,14 +31,28 @@
                 return;
             }
 
+            result.empty();
+            button.prop('disabled', true);
+
             getCompanySymbol(companyName)
-                .then(function(data){
-                    return getQuote(data[0].Symbol)
-                .then(function(data){
-                    result.empty();
+                .then(function(data) {
+
+                    if (!data.length) {
+
+                        result.text("Nothing found");
+                        return;
+                    }
+                    return getQuote(data[0].Symbol);
+                })
+                .then(function(data) {
                     result.text(JSON.stringify(data, null, 4));
+                })
+                .fail(function(error) {
+                    console.log(error);
+                })
+                .done(function() {
+                    button.prop('disabled', false);
                 });
-            });
         });
     });
 
