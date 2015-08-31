@@ -3,6 +3,7 @@
     'use strict';
 
     $(document).ready(function () {
+
         var input = $('.search-input');
         var button = $('.search-button');
         var result = $('.result');
@@ -43,6 +44,7 @@
             });
 
             if (!initialized) {
+
                  $table
                     .append($headRow)
                     .data('initialized', true)
@@ -51,9 +53,13 @@
             $table
                 .append($dataRow)
                 .show();
+
+            $dataRow.on('click', function(){
+                 new Markit.InteractiveChartApi(data.Symbol, 3650);
+            });
         }
 
-        button.on('click', function () {
+       function search() {
 
             var companyName = $.trim(input.val());
 
@@ -61,6 +67,7 @@
                 input
                     .addClass('invalid')
                     .on('keypress', function keypressHandler() {
+
                         input
                             .removeClass('invalid')
                             .off('keypress', keypressHandler);
@@ -77,11 +84,14 @@
 
                     if (!data.length) {
 
-                        result.text("Nothing found");
+                        result.text('Nothing found');
                         return;
                     }
 
+                    result.text('Click on row to load historic chart data.');
+
                     $.each(data, function(i, data) {
+
                         getQuote(data.Symbol)
                             .then(function(data){
                                 showData(data);
@@ -91,6 +101,14 @@
                 .done(function() {
                     button.prop('disabled', false);
                 });
+        }
+
+        button.on('click', search);
+
+        input.keypress(function (e) {
+            if (e.which === 13) {
+                search();
+            }
         });
     });
 
