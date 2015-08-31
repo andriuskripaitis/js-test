@@ -98,9 +98,15 @@
                             });
                     })
                 })
-                .done(function() {
-                    button.prop('disabled', false);
+                .done(unblockInterface)
+                .fail(function(){
+                    result.text('Some error has occurred, try again later.');
+                    unblockInterface();
                 });
+        }
+
+        function unblockInterface(){
+            button.prop('disabled', false);
         }
 
         button.on('click', search);
